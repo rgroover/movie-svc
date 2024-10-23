@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using movie.domain;
 using MovieService.Models;
 using Newtonsoft.Json;
 using RestSharp;
@@ -11,17 +10,12 @@ namespace movie_svc.Controllers;
 public class ActorController : ControllerBase
 {
     private readonly ILogger<ActorController> _logger;
-    private readonly RestClient restClient;
-    private readonly IConfiguration _config;
-    private readonly string apiKey;
+    private readonly IRestClient _restClient;
 
-    public ActorController(IConfiguration config, ILogger<ActorController> logger)
+    public ActorController( ILogger<ActorController> logger, IRestClient restClient)
     {
         _logger = logger;
-        var options = new RestClientOptions("https://api.themoviedb.org/3");
-        restClient = new RestClient(options);
-        _config = config;
-        apiKey = _config["MovieApiKey"];  // comes from user secrets
+        _restClient = restClient;
     }
 
     [HttpGet]
@@ -29,8 +23,8 @@ public class ActorController : ControllerBase
     [Route("/api/actor/{actorId}")]
     public async Task<ActorDetails> GetById(int actorId)
     {
-        var request = SetupAPIRequest(actorId);
-        var response = await restClient.GetAsync(request);
+        var request = new RestRequest($"/person/{actorId}?language=en-US&append_to_response=combined_credits");
+        var response = await _restClient.GetAsync(request);
         ActorDetails actorDetails;
 
         if(response.StatusCode == System.Net.HttpStatusCode.OK)
@@ -44,11 +38,21 @@ public class ActorController : ControllerBase
         return actorDetails;
     }
 
-    private RestRequest SetupAPIRequest(int actorId)
+    [HttpGet]
+    [ProducesResponseType(typeof(ActorSearchResults), 200)]
+    [Route("/api/search/actor/{searchText}")]
+    public async Task<ActorSearchResults> ActorSearch(string searchText)
     {
-            var request = new RestRequest($"/person/{actorId}?language=en-US&append_to_response=combined_credits");
-            request.AddHeader("accept", "application/json");
-            request.AddHeader("Authorization", $"Bearer {apiKey}");
-            return request;
+        ActorSearchResults results = null;
+        var request = new RestRequest($"/search/person?query={searchText}&include_adult=false&language=en-US&page=1");
+        var response = await _restClient.GetAsync(request);
+
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            results = JsonConvert.DeserializeObject<ActorSearchResults>(response.Content);
+        } else {
+            throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
+        }
+        return results;
     }
 }

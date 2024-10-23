@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.Marshalling;
 using Microsoft.AspNetCore.Mvc;
 using movie.domain;
 using Newtonsoft.Json;
@@ -11,17 +10,12 @@ namespace movie_svc.Controllers;
 public class MovieController : ControllerBase
 {
     private readonly ILogger<MovieController> _logger;
-    private readonly RestClient restClient;
-    private readonly IConfiguration _config;
-    private readonly string apiKey;
+    private readonly IRestClient _restClient;
 
-    public MovieController(IConfiguration config, ILogger<MovieController> logger)
+    public MovieController(IConfiguration config, ILogger<MovieController> logger, IRestClient restClient)
     {
         _logger = logger;
-        var options = new RestClientOptions("https://api.themoviedb.org/3");
-        restClient = new RestClient(options);
-        _config = config;
-        apiKey = _config["MovieApiKey"];  // comes from user secrets
+        _restClient = restClient;
     }
 
     [HttpGet]
@@ -29,8 +23,8 @@ public class MovieController : ControllerBase
     [Route("/api/movies/{externalId}")]
     public async Task<MovieModel> GetByExternalId(int externalId)
     {
-        var request = SetupAPIRequest(externalId);
-        var response = await restClient.GetAsync(request);
+        var request = new RestRequest($"/movie/{externalId}?language=en-US");
+        var response = await _restClient.GetAsync(request);
 
         var movieModel = new MovieModel();
 
@@ -42,18 +36,10 @@ public class MovieController : ControllerBase
             throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
         }
 
-        var castAnCrew = await GetCastForMovie(externalId);
-        movieModel.CastAndCrew = castAnCrew;
+        var castAndCrew = await GetCastForMovie(externalId);
+        movieModel.CastAndCrew = castAndCrew;
         movieModel.ExternalId = externalId;
         return movieModel;
-    }
-
-    private RestRequest SetupAPIRequest(int id)
-    {
-            var request = new RestRequest($"/movie/{id}?language=en-US");
-            request.AddHeader("accept", "application/json");
-            request.AddHeader("Authorization", $"Bearer {apiKey}");
-            return request;
     }
 
     private async Task<CastAndCrewModel> GetCastForMovie(int externalMovieId)
@@ -61,10 +47,7 @@ public class MovieController : ControllerBase
         CastAndCrewModel castAndCrew = null;
 
         var request = new RestRequest($"/movie/{externalMovieId}/credits?language=en-US");
-        request.AddHeader("accept", "application/json");
-        request.AddHeader("Authorization", $"Bearer {apiKey}");
-
-        var response = await restClient.GetAsync(request);
+        var response = await _restClient.GetAsync(request);
 
         if(response.StatusCode == System.Net.HttpStatusCode.OK)
         {
@@ -77,16 +60,13 @@ public class MovieController : ControllerBase
     
     [HttpGet]
     [ProducesResponseType(typeof(SearchResultsPagedModel), 200)]
-    [Route("/api/search/{searchText}")]
+    [Route("/api/search/movie/{searchText}")]
     public async Task<SearchResultsPagedModel> MovieSearch(string searchText)
     {
         SearchResultsPagedModel searchResultsPagedModel = null;
 
         var request = new RestRequest($"/search/movie?include_adult=false&language=en-US&page=1&query={searchText}");
-        request.AddHeader("accept", "application/json");
-        request.AddHeader("Authorization", $"Bearer {apiKey}");
-
-        var response = await restClient.GetAsync(request);
+        var response = await _restClient.GetAsync(request);
 
         if(response.StatusCode == System.Net.HttpStatusCode.OK)
         {

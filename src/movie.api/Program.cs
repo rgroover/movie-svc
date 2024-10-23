@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.RateLimiting;
+using RestSharp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,19 @@ builder.Services.AddRateLimiter(options =>
         opt.PermitLimit = 100; // allow 100 requests per window
     });
 });
+var configuration = builder.Configuration;
+
+builder.Services.AddSingleton<IRestClient>(
+    provider => {
+        var options = new RestClientOptions(configuration["RestClientRoot"]);
+        var restClient = new RestClient(options);
+        // Set default headers that will apply to all requests
+        restClient.AddDefaultHeader("Authorization", $"Bearer {configuration["MovieApiKey"]}");
+        restClient.AddDefaultHeader("Accept", "application/json");
+        return restClient;
+    }
+);
+
 
 var app = builder.Build();
 
