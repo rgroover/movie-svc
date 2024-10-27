@@ -1,7 +1,7 @@
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 using Newtonsoft.Json;
 
-public class SearchResult
+namespace movie_svc.ViewModels.Movies;
+public class MovieSearchResult
     {
         [JsonProperty("adult")]
         public bool Adult { get; set; }
@@ -52,7 +52,7 @@ public class SearchResult
         public int Page { get; set; }
 
         [JsonProperty("results")]
-        public List<SearchResult> SearchResults { get; set; }
+        public List<MovieSearchResult> SearchResults { get; set; }
 
         [JsonProperty("total_pages")]
         public int TotalPages { get; set; }

@@ -1,4 +1,5 @@
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+namespace movie_svc.ViewModels.Actors;
+
 using Newtonsoft.Json;
 
 public class KnownFor

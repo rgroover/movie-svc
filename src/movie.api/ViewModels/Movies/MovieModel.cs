@@ -1,6 +1,7 @@
+using movie_svc.ViewModels.Common;
 using Newtonsoft.Json;
 
-namespace movie.domain
+namespace movie_svc.ViewModels.Movies
 {
     public class MovieModel
     {
@@ -8,24 +9,7 @@ namespace movie.domain
         public MovieDetails MovieDetails { get; set; }
         public CastAndCrewModel CastAndCrew { get; set; }
     }
-// Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-    public record Genre(
-        [property: JsonProperty("id")] int Id,
-        [property: JsonProperty("name")] string Name
-    );
-
-    public record ProductionCompany(
-        [property: JsonProperty("id")] int Id,
-        [property: JsonProperty("logo_path")] string LogoPath,
-        [property: JsonProperty("name")] string Name,
-        [property: JsonProperty("origin_country")] string OriginCountry
-    );
-
-    public record ProductionCountry(
-        [property: JsonProperty("iso_3166_1")] string Iso31661,
-        [property: JsonProperty("name")] string Name
-    );
-
+    
     public record MovieDetails(
         [property: JsonProperty("adult")] bool Adult,
         [property: JsonProperty("backdrop_path")] string BackdropPath,
@@ -54,12 +38,4 @@ namespace movie.domain
         [property: JsonProperty("vote_average")] double VoteAverage,
         [property: JsonProperty("vote_count")] int VoteCount
     );
-
-    public record SpokenLanguage(
-        [property: JsonProperty("english_name")] string EnglishName,
-        [property: JsonProperty("iso_639_1")] string Iso6391,
-        [property: JsonProperty("name")] string Name
-    );
-
-
 }

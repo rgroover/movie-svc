@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using movie.domain;
+using movie_svc.ViewModels.Common;
+using movie_svc.ViewModels.Movies;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -20,7 +21,7 @@ public class MovieController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(MovieModel), 200)]
-    [Route("/api/movies/{externalId}")]
+    [Route("/api/movie/{externalId}")]
     public async Task<MovieModel> GetByExternalId(int externalId)
     {
         var request = new RestRequest($"/movie/{externalId}?language=en-US");
