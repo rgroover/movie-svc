@@ -1,6 +1,7 @@
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
 using Newtonsoft.Json;
 
+namespace movie_svc.ViewModels.Common;
 public class Cast
     {
         [JsonProperty("adult")]

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using MovieService.Models;
+using movie_svc.ViewModels.Actors;
 using Newtonsoft.Json;
 using RestSharp;
 
