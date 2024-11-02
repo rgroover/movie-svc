@@ -28,7 +28,7 @@ namespace movie_svc.ViewModels.Movies
         [property: JsonProperty("production_companies")] IReadOnlyList<ProductionCompany> ProductionCompanies,
         [property: JsonProperty("production_countries")] IReadOnlyList<ProductionCountry> ProductionCountries,
         [property: JsonProperty("release_date")] string ReleaseDate,
-        [property: JsonProperty("revenue")] int Revenue,
+        [property: JsonProperty("revenue")] long Revenue,
         [property: JsonProperty("runtime")] int Runtime,
         [property: JsonProperty("spoken_languages")] IReadOnlyList<SpokenLanguage> SpokenLanguages,
         [property: JsonProperty("status")] string Status,
