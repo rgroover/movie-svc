@@ -1,4 +1,6 @@
 // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+
+using movie_svc.ViewModels.Actors;
 using Newtonsoft.Json;
 
 namespace movie_svc.ViewModels.Common;
@@ -39,6 +41,9 @@ public class Cast
 
         [JsonProperty("order")]
         public int Order { get; set; }
+        
+        [JsonProperty("roles")]
+        public List<Role> Roles { get; set; }
     }
 
     public class Crew

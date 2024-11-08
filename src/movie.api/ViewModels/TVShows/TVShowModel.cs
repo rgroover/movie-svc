@@ -215,7 +215,7 @@ public class TvShowModel
     [JsonProperty("vote_count")]
     public int VoteCount { get; set; }
 
-    [JsonProperty("credits")]
+    [JsonProperty("aggregate_credits")]
     public CastAndCrewModel CastAndCrew { get; set; }
 }
 
