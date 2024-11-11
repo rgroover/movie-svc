@@ -8,6 +8,7 @@ namespace movie_svc.ViewModels.Movies
         public int ExternalId { get; set; }
         public MovieDetails MovieDetails { get; set; }
         public CastAndCrewModel CastAndCrew { get; set; }
+        public WatchProviders WatchProviders { get; set; }
     }
     
     public record MovieDetails(

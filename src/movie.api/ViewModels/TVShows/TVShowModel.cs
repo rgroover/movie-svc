@@ -217,6 +217,8 @@ public class TvShowModel
 
     [JsonProperty("aggregate_credits")]
     public CastAndCrewModel CastAndCrew { get; set; }
+    
+    public WatchProviders WatchProviders { get; set; }
 }
 
 public class Season

@@ -52,6 +52,24 @@ public class TvShowController : Controller
         } else {
             throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
         }
+        var watchProviders = await GetWatchProviders(externalId);
+        tvShowModel.WatchProviders = watchProviders;
         return tvShowModel;
+    }
+    
+    private async Task<WatchProviders> GetWatchProviders(int externalId)
+    {
+        WatchProviders watchProviders = null;
+
+        var request = new RestRequest($"/tv/{externalId}/watch/providers");
+        var response = await _restClient.GetAsync(request);
+
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            watchProviders = JsonConvert.DeserializeObject<WatchProviders>(response.Content);
+        } else {
+            throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
+        }
+        return watchProviders;
     }
 }

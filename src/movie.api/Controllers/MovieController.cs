@@ -38,8 +38,10 @@ public class MovieController : ControllerBase
         }
 
         var castAndCrew = await GetCastForMovie(externalId);
+        var watchProviders = await GetWatchProviders(externalId);
         movieModel.CastAndCrew = castAndCrew;
         movieModel.ExternalId = externalId;
+        movieModel.WatchProviders = watchProviders; 
         return movieModel;
     }
 
@@ -57,6 +59,22 @@ public class MovieController : ControllerBase
             throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
         }
         return castAndCrew;
+    }
+
+    private async Task<WatchProviders> GetWatchProviders(int externalId)
+    {
+        WatchProviders watchProviders = null;
+
+        var request = new RestRequest($"/movie/{externalId}/watch/providers");
+        var response = await _restClient.GetAsync(request);
+
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            watchProviders = JsonConvert.DeserializeObject<WatchProviders>(response.Content);
+        } else {
+            throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
+        }
+        return watchProviders;
     }
     
     [HttpGet]
