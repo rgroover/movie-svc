@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using movie_svc.Services;
 using movie_svc.ViewModels.Actors;
 using Newtonsoft.Json;
 using RestSharp;
@@ -10,12 +11,12 @@ namespace movie_svc.Controllers;
 public class ActorController : ControllerBase
 {
     private readonly ILogger<ActorController> _logger;
-    private readonly IRestClient _restClient;
+    private readonly IRestClientService _restClientService;
 
-    public ActorController( ILogger<ActorController> logger, IRestClient restClient)
+    public ActorController( ILogger<ActorController> logger, IRestClientService restClientService)
     {
         _logger = logger;
-        _restClient = restClient;
+        _restClientService = restClientService;
     }
 
     [HttpGet]
@@ -24,17 +25,7 @@ public class ActorController : ControllerBase
     public async Task<ActorDetails> GetById(int actorId)
     {
         var request = new RestRequest($"/person/{actorId}?language=en-US&append_to_response=combined_credits");
-        var response = await _restClient.GetAsync(request);
-        ActorDetails actorDetails;
-
-        if(response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            actorDetails = JsonConvert.DeserializeObject<ActorDetails>(response.Content);
-
-        } else {
-            throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
-        }
-
+        ActorDetails actorDetails = await _restClientService.GetAsync<ActorDetails>(request);
         return actorDetails;
     }
 
@@ -43,16 +34,8 @@ public class ActorController : ControllerBase
     [Route("/api/search/actor/{searchText}")]
     public async Task<ActorSearchResults> ActorSearch(string searchText)
     {
-        ActorSearchResults results = null;
         var request = new RestRequest($"/search/person?query={searchText}&include_adult=false&language=en-US&page=1");
-        var response = await _restClient.GetAsync(request);
-
-        if(response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            results = JsonConvert.DeserializeObject<ActorSearchResults>(response.Content);
-        } else {
-            throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
-        }
+        ActorSearchResults results = await _restClientService.GetAsync<ActorSearchResults>(request);
         return results;
     }
 }

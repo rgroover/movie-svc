@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.RateLimiting;
+using movie_svc.Services;
 using RestSharp;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,17 +33,7 @@ builder.Services.AddRateLimiter(options =>
 });
 var configuration = builder.Configuration;
 
-builder.Services.AddSingleton<IRestClient>(
-    provider => {
-        var options = new RestClientOptions(configuration["RestClientRoot"]);
-        var restClient = new RestClient(options);
-        // Set default headers that will apply to all requests
-        restClient.AddDefaultHeader("Authorization", $"Bearer {configuration["MovieApiKey"]}");
-        restClient.AddDefaultHeader("Accept", "application/json");
-        return restClient;
-    }
-);
-
+builder.Services.AddHttpClient<IRestClientService, RestClientService>();
 
 var app = builder.Build();
 
