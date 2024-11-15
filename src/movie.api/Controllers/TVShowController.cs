@@ -26,6 +26,26 @@ public class TvShowController : Controller
     }
     
     [HttpGet]
+    [ProducesResponseType(typeof(TVShowSearchResults), 200)]
+    [Route("/api/tvshow/trending")]
+    public async Task<TVShowSearchResults> TvTrending()
+    {
+        var request = new RestRequest($"/trending/tv/week?language=en-US");
+        TVShowSearchResults results = await _restClientService.GetAsync<TVShowSearchResults>(request);
+        return results;
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(TVShowSearchResults), 200)]
+    [Route("/api/tvshow/popular")]
+    public async Task<TVShowSearchResults> TvPopular()
+    {
+        var request = new RestRequest($"/tv/popular?language=en-US&page=1");
+        TVShowSearchResults results = await _restClientService.GetAsync<TVShowSearchResults>(request);
+        return results;
+    }
+    
+    [HttpGet]
     [ProducesResponseType(typeof(TvShowModel), 200)]
     [Route("/api/tvshow/{externalId}")]
     public async Task<TvShowModel> GetByExternalId(int externalId)

@@ -47,6 +47,26 @@ public class MovieController : ControllerBase
         return searchResultsPagedModel;
     }
 
+    [HttpGet]
+    [ProducesResponseType(typeof(SearchResultsPagedModel), 200)]
+    [Route("/api/movie/trending")]
+    public async Task<SearchResultsPagedModel> MovieTrending()
+    {
+        var request = new RestRequest($"/trending/movie/week?language=en-US");
+        SearchResultsPagedModel searchResultsPagedModel = await _restClientService.GetAsync<SearchResultsPagedModel>(request);
+        return searchResultsPagedModel;
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(SearchResultsPagedModel), 200)]
+    [Route("/api/movie/popular")]
+    public async Task<SearchResultsPagedModel> MoviePopular()
+    {
+        var request = new RestRequest($"/movie/popular?language=en-US&page=1&region=US");
+        SearchResultsPagedModel searchResultsPagedModel = await _restClientService.GetAsync<SearchResultsPagedModel>(request);
+        return searchResultsPagedModel;
+    }
+    
     private async Task<CastAndCrewModel> GetCastForMovie(int externalMovieId)
     {
         var request = new RestRequest($"/movie/{externalMovieId}/credits?language=en-US");
