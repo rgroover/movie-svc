@@ -38,4 +38,24 @@ public class ActorController : ControllerBase
         ActorSearchResults results = await _restClientService.GetAsync<ActorSearchResults>(request);
         return results;
     }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(ActorSearchResults), 200)]
+    [Route("/api/actor/trending")]
+    public async Task<ActorSearchResults> ActorTrending()
+    {
+        var request = new RestRequest($"/trending/person/week?language=en-US");
+        ActorSearchResults results = await _restClientService.GetAsync<ActorSearchResults>(request);
+        return results;
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(ActorSearchResults), 200)]
+    [Route("/api/actor/popular")]
+    public async Task<ActorSearchResults> ActorPopular()
+    {
+        var request = new RestRequest($"/person/popular?language=en-US&page=1");
+        ActorSearchResults results = await _restClientService.GetAsync<ActorSearchResults>(request);
+        return results;
+    }
 }
