@@ -219,6 +219,7 @@ public class TvShowModel
     public CastAndCrewModel CastAndCrew { get; set; }
     
     public WatchProviders WatchProviders { get; set; }
+    public VideoResults Videos { get; set; }
 }
 
 public class Season

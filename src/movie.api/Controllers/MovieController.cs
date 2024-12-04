@@ -31,9 +31,11 @@ public class MovieController : ControllerBase
         
         var castAndCrew = await GetCastForMovie(externalId);
         var watchProviders = await GetWatchProviders(externalId);
+        var videos = await GetVideos(externalId);
         movieModel.CastAndCrew = castAndCrew;
         movieModel.ExternalId = externalId;
         movieModel.WatchProviders = watchProviders; 
+        movieModel.Videos = videos;
         return movieModel;
     }
     
@@ -79,5 +81,12 @@ public class MovieController : ControllerBase
         var request = new RestRequest($"/movie/{externalId}/watch/providers");
         WatchProviders watchProviders = await _restClientService.GetAsync<WatchProviders>(request);
         return watchProviders;
+    }
+    
+    private async Task<VideoResults> GetVideos(int externalId)
+    {
+        var request = new RestRequest($"/movie/{externalId}/videos");
+        VideoResults videoResults = await _restClientService.GetAsync<VideoResults>(request);
+        return videoResults;
     }
 }

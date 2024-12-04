@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using movie_svc.Services;
+using movie_svc.ViewModels.Common;
 using movie_svc.ViewModels.TVShows;
 using Newtonsoft.Json;
 using RestSharp;
@@ -59,7 +60,9 @@ public class TvShowController : Controller
                 .Take(50).ToList();
 
         var watchProviders = await GetWatchProviders(externalId);
+        var videos = await GetVideos(externalId);
         tvShowModel.WatchProviders = watchProviders;
+        tvShowModel.Videos = videos;
         return tvShowModel;
     }
     
@@ -68,5 +71,12 @@ public class TvShowController : Controller
         var request = new RestRequest($"/tv/{externalId}/watch/providers");
         WatchProviders watchProviders = await _restClientService.GetAsync<WatchProviders>(request);
         return watchProviders;
+    }
+    
+    private async Task<VideoResults> GetVideos(int externalId)
+    {
+        var request = new RestRequest($"/tv/{externalId}/videos");
+        VideoResults videoResults = await _restClientService.GetAsync<VideoResults>(request);
+        return videoResults;
     }
 }
