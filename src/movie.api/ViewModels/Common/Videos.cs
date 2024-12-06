@@ -29,7 +29,7 @@ public class Video
     public bool Official { get; set; }
 
     [JsonProperty("published_at")]
-    public DateTime PublishedAt { get; set; }
+    public string PublishedAt { get; set; }
 
     [JsonProperty("id")]
     public string Id { get; set; }
