@@ -1,7 +1,7 @@
 using movie_svc.ViewModels.Common;
+using Newtonsoft.Json;
 
 namespace movie_svc.ViewModels.TVShows;
-using Newtonsoft.Json;
 
 public class CreatedBy
 {

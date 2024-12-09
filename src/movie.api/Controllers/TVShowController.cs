@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using movie_svc.Services;
 using movie_svc.ViewModels.Common;
 using movie_svc.ViewModels.TVShows;
+using movie_svc.ViewModels.TVShows.SeasonsAndEpisodes;
 using Newtonsoft.Json;
 using RestSharp;
 
@@ -64,6 +65,38 @@ public class TvShowController : Controller
         tvShowModel.WatchProviders = watchProviders;
         tvShowModel.Videos = videos;
         return tvShowModel;
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(TvSeason), 200)]
+    [Route("/api/tvshow/{seriesId}/seasons/{seasonNumber}")]
+    public async Task<TvSeason> GetSeasonForTvShow(int seriesId, int seasonNumber)
+    {
+        var request = new RestRequest($"tv/{seriesId}/season/{seasonNumber}");
+        TvSeason tvSeason = await _restClientService.GetAsync<TvSeason>(request);
+        
+        // call the API to get the Tv Show Name
+        request = new RestRequest($"/tv/{seriesId}");
+        TvShowModel tvShowModel = await _restClientService.GetAsync<TvShowModel>(request);
+        tvSeason.TvShowTitle = tvShowModel.Name;
+        
+        return tvSeason;
+    }
+    
+    [HttpGet]
+    [ProducesResponseType(typeof(TvEpisode), 200)]
+    [Route("/api/tvshow/{seriesId}/seasons/{seasonNumber}/episode/{episodeNumber}")]
+    public async Task<TvEpisode> GetEpisodeForTvShowSeason(int seriesId, int seasonNumber, int episodeNumber)
+    {
+        var request = new RestRequest($"/tv/{seriesId}/season/{seasonNumber}/episode/{episodeNumber}");
+        TvEpisode tvEpisode = await _restClientService.GetAsync<TvEpisode>(request);
+        
+        // call the API to get the Tv Show Name
+        request = new RestRequest($"/tv/{seriesId}");
+        TvShowModel tvShowModel = await _restClientService.GetAsync<TvShowModel>(request);
+        tvEpisode.TvShowTitle = tvShowModel.Name;
+        
+        return tvEpisode;
     }
     
     private async Task<WatchProviders> GetWatchProviders(int externalId)
