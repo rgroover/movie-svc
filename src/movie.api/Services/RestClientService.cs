@@ -11,14 +11,12 @@ public class RestClientService : IRestClientService
 
     public RestClientService(HttpClient httpClient, IConfiguration configuration)
     {
-        // Configure the base URL using appsettings or another configuration source
-        var baseUrl = configuration.GetValue<string>("ApiSettings:BaseUrl");
-
         // Use HttpClient from the factory
-        var options = new RestClientOptions(configuration["RestClientRoot"]);
+        var options = new RestClientOptions(configuration["TMDB:RestClientRoot"]);
         _restClient = new RestClient(httpClient, options);
+        
         // Set default headers that will apply to all requests
-        _restClient.AddDefaultHeader("Authorization", $"Bearer {configuration["MovieApiKey"]}");
+        _restClient.AddDefaultHeader("Authorization", $"Bearer {configuration["TMDB:MovieApiKey"]}");
         _restClient.AddDefaultHeader("Accept", "application/json");
     }
 

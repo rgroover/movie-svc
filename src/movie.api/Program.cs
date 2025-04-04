@@ -195,10 +195,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// JsonSerializerOptions jsonSerializerOptions = new()
-// {
-//     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-//     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-// };
-
 app.Run();

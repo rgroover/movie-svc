@@ -22,7 +22,7 @@ public class FavoritesController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(IEnumerable<FavoriteModel>), 200)]
-    public async Task<IActionResult> AddOrUpdateFavorite(FavoriteModel favorite)
+    public async Task<IActionResult> AddFavorite(FavoriteModel favorite)
     {
         var newFavorite = await _favoritesService.AddFavorite(favorite);
         return Ok(newFavorite);
@@ -49,7 +49,7 @@ public class FavoritesController : ControllerBase
     private string GetAuthenticatedUserEmail()
     {
         var userEmail = HttpContext.User.FindFirstValue(ClaimTypes.Email) ?? 
-                        HttpContext.User.FindFirstValue("email");
+            HttpContext.User.FindFirstValue("email");
 
         if (string.IsNullOrEmpty(userEmail))
         {
