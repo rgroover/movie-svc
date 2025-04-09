@@ -47,6 +47,8 @@ public class FavoritesService : IFavoritesService
         {
             await Init();
             var favoriteDto = MapFavoriteVMtoDto(favorite);
+            favoriteDto.CreatedAt = DateTime.UtcNow;
+            favoriteDto.Id = Guid.NewGuid();
             ItemResponse<FavoriteDto> response = await _container.UpsertItemAsync(favoriteDto, new PartitionKey(favoriteDto.UserEmail));
             FavoriteModel model = MapFavoriteDtoToVM(response.Resource);
             return model; // Return the newly created item

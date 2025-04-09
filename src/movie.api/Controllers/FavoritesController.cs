@@ -24,6 +24,8 @@ public class FavoritesController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<FavoriteModel>), 200)]
     public async Task<IActionResult> AddFavorite(FavoriteModel favorite)
     {
+        var email = GetAuthenticatedUserEmail();
+        favorite.UserEmail = email;
         var newFavorite = await _favoritesService.AddFavorite(favorite);
         return Ok(newFavorite);
     }
