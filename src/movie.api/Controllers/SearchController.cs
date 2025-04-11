@@ -22,9 +22,9 @@ public class SearchController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(MultiSearchPagedResults), 200)]
     [Route("/api/search/{searchText}")]
-    public async Task<MultiSearchPagedResults> MultiSearch(string searchText)
+    public async Task<MultiSearchPagedResults> MultiSearch(string searchText, [FromQuery] int page = 1)
     {
-        var request = new RestRequest($"/search/multi?query={searchText}&include_adult=false&language=en-US&page=1");
+        var request = new RestRequest($"/search/multi?query={searchText}&include_adult=false&language=en-US&page={page}");
         MultiSearchPagedResults searchResultsPagedModel = await _restClientService.GetAsync<MultiSearchPagedResults>(request);
         return searchResultsPagedModel;
     }
