@@ -46,11 +46,17 @@ public class FavoritesService : IFavoritesService
         try
         {
             await Init();
-            var favoriteDto = MapFavoriteVMtoDto(favorite);
+            var favCount = await GetFavoritesCount(favorite.UserEmail);
+            if (favCount >= 100)
+            {   
+                // need a global error handler to return something useful to the client instead of a 500
+                throw new ApplicationException("User has reached the maximum number of favorites = 100");   
+            }
+            var favoriteDto = Mappers.MapFavoriteVMtoDto(favorite);
             favoriteDto.CreatedAt = DateTime.UtcNow;
             favoriteDto.Id = Guid.NewGuid();
             ItemResponse<FavoriteDto> response = await _container.UpsertItemAsync(favoriteDto, new PartitionKey(favoriteDto.UserEmail));
-            FavoriteModel model = MapFavoriteDtoToVM(response.Resource);
+            FavoriteModel model = Mappers.MapFavoriteDtoToVM(response.Resource);
             return model; // Return the newly created item
         }
         catch (CosmosException ex)
@@ -59,6 +65,24 @@ public class FavoritesService : IFavoritesService
             return null;
         }
     }
+
+    public async Task<int> GetFavoritesCount(string userEmail)
+    {
+        await Init();
+        var sqlQueryText = $"SELECT VALUE COUNT(1) FROM c WHERE c.user_email = '{userEmail}'";
+
+        QueryDefinition queryDefinition = new QueryDefinition(sqlQueryText);
+        
+        int count = 0;
+        var iterator = _container.GetItemQueryIterator<int>(queryDefinition);
+        while (iterator.HasMoreResults)
+        {
+            var response = await iterator.ReadNextAsync();
+            count += response.Resource.FirstOrDefault();
+        }
+        return count;
+    }
+
     public async Task<IEnumerable<FavoriteModel>> GetFavorites(string userEmail)
     {
         try
@@ -67,8 +91,9 @@ public class FavoritesService : IFavoritesService
             var sqlQueryText = $"SELECT * FROM c WHERE c.user_email = '{userEmail}'";
 
             QueryDefinition queryDefinition = new QueryDefinition(sqlQueryText);
-            
-            FeedIterator<FavoriteDto> queryResultSetIterator = _container.GetItemQueryIterator<FavoriteDto>(queryDefinition);
+
+            FeedIterator<FavoriteDto> queryResultSetIterator =
+                _container.GetItemQueryIterator<FavoriteDto>(queryDefinition);
 
             List<FavoriteDto> favorites = new List<FavoriteDto>();
 
@@ -77,12 +102,13 @@ public class FavoritesService : IFavoritesService
                 FeedResponse<FavoriteDto> currentResultSet = await queryResultSetIterator.ReadNextAsync();
                 favorites.AddRange(currentResultSet);
             }
-            
+
             List<FavoriteModel> favoritesModelList = new List<FavoriteModel>();
             foreach (FavoriteDto favorite in favorites)
             {
-                favoritesModelList.Add(MapFavoriteDtoToVM(favorite));
+                favoritesModelList.Add(Mappers.MapFavoriteDtoToVM(favorite));
             }
+
             return favoritesModelList;
         }
         catch (CosmosException cosmosException)
@@ -95,35 +121,5 @@ public class FavoritesService : IFavoritesService
             Console.WriteLine("Generic Exception >>>>>" + ex.ToString());
             return null;
         }
-    }
-
-    private FavoriteDto MapFavoriteVMtoDto(FavoriteModel favorite)
-    {
-        var favoriteDto = new FavoriteDto()
-        {
-            UserEmail = favorite.UserEmail,
-            Id = favorite.Id,
-            MediaTitle =  favorite.MediaTitle,
-            MediaId =  favorite.MediaId,
-            MediaImageUrl =  favorite.MediaImageUrl,
-            MediaType =  favorite.MediaType,
-            CreatedAt = favorite.CreatedAt
-        };
-        return favoriteDto;
-    }
-    
-    private FavoriteModel MapFavoriteDtoToVM(FavoriteDto favorite)
-    {
-        var favoriteModel = new FavoriteModel()
-        {
-            UserEmail = favorite.UserEmail,
-            Id = favorite.Id,
-            MediaTitle =  favorite.MediaTitle,
-            MediaId =  favorite.MediaId,
-            MediaImageUrl =  favorite.MediaImageUrl,
-            MediaType =  favorite.MediaType,
-            CreatedAt = favorite.CreatedAt
-        };
-        return favoriteModel;
     }
 }
