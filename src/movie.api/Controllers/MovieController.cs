@@ -69,6 +69,18 @@ public class MovieController : ControllerBase
         return searchResultsPagedModel;
     }
     
+    [HttpGet]
+    [ProducesResponseType(typeof(SearchResultsPagedModel), 200)]
+    [Route("/api/movie/now-playing")]
+    public async Task<SearchResultsPagedModel> MovieNowPlaying()
+    {
+        var minDate = DateTime.UtcNow.AddDays(-120).ToString("yyyy-MM-dd");
+        var maxDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+        var request = new RestRequest($"discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_release_type=2|3&release_date.gte={minDate}&release_date.lte={maxDate}");
+        SearchResultsPagedModel searchResultsPagedModel = await _restClientService.GetAsync<SearchResultsPagedModel>(request);
+        return searchResultsPagedModel;
+    }
+    
     private async Task<CastAndCrewModel> GetCastForMovie(int externalMovieId)
     {
         var request = new RestRequest($"/movie/{externalMovieId}/credits?language=en-US");
