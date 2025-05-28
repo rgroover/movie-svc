@@ -9,7 +9,7 @@ The backend service for the Movie Search web app is a simple
 The "about" page has more info on the project:
 [About Page](https://groover.tech/about)
 
-It's important to set user secrets in your secrets.json for the TMDB rest api key, Auto0, and Cosmos DB
+It's important to set user secrets in your secrets.json for the TMDB rest api key, Auth0, and Cosmos DB
 
 ```json
   "Auth0": {
