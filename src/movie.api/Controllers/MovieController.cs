@@ -80,6 +80,16 @@ public class MovieController : ControllerBase
         SearchResultsPagedModel searchResultsPagedModel = await _restClientService.GetAsync<SearchResultsPagedModel>(request);
         return searchResultsPagedModel;
     }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(SearchResultsPagedModel), 200)]
+    [Route("/api/movie/{externalId}/recommendations")]
+    public async Task<SearchResultsPagedModel> GetRecommendations(int externalId, [FromQuery] int page = 1)
+    {
+        var request = new RestRequest($"/movie/{externalId}/recommendations?language=en-US&page={page}");
+        SearchResultsPagedModel recommendations = await _restClientService.GetAsync<SearchResultsPagedModel>(request);
+        return recommendations;
+    }
     
     private async Task<CastAndCrewModel> GetCastForMovie(int externalMovieId)
     {
