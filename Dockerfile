@@ -1,5 +1,5 @@
 # Stage 1: Build the .NET Core Web API
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -15,7 +15,7 @@ COPY . ./
 RUN dotnet publish -c Release -o /publish
 
 # Stage 2: Create a runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 
 # Set the working directory in the container
 WORKDIR /app
