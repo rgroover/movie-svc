@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/movie.api/bin/Debug/net8.0/movie-svc.dll",
+            "program": "${workspaceFolder}/src/movie.api/bin/Debug/net10.0/movie-svc.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/movie.api/bin/Debug/net8.0",
+            "cwd": "${workspaceFolder}/src/movie.api/bin/Debug/net10.0",
             "stopAtEntry": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
