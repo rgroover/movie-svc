@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "movie-svc", "src\movie.api\movie-svc.csproj", "{3E74A6E5-028E-420B-BFCC-78BB8414C492}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "movie.api.Tests", "tests\movie.api.Tests\movie.api.Tests.csproj", "{A1F35B1D-7AEE-4EAA-90A7-5E99CD31A218}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D6FCFADA-82E8-436A-AD11-364D4B2A92D0}"
 EndProject
 Global
@@ -17,6 +19,10 @@ Global
 		{3E74A6E5-028E-420B-BFCC-78BB8414C492}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E74A6E5-028E-420B-BFCC-78BB8414C492}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E74A6E5-028E-420B-BFCC-78BB8414C492}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1F35B1D-7AEE-4EAA-90A7-5E99CD31A218}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F35B1D-7AEE-4EAA-90A7-5E99CD31A218}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F35B1D-7AEE-4EAA-90A7-5E99CD31A218}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F35B1D-7AEE-4EAA-90A7-5E99CD31A218}.Release|Any CPU.Build.0 = Release|Any CPU
 		{43EABEFD-336A-430B-8518-9FC129374DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{43EABEFD-336A-430B-8518-9FC129374DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43EABEFD-336A-430B-8518-9FC129374DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -24,13 +24,14 @@ public class RestClientService : IRestClientService
     {
         T result = default!;
         
-        var response = await _restClient.GetAsync(request);
+        var response = await _restClient.ExecuteGetAsync(request);
         
-        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        if(response.IsSuccessful)
         {
-            result = JsonConvert.DeserializeObject<T>(response.Content);
+            result = JsonConvert.DeserializeObject<T>(response.Content ?? string.Empty)
+                ?? throw new ApplicationException("TMDB returned an empty or invalid response.");
         } else {
-            throw new ApplicationException($"Error calling external movie API - {response.StatusCode}");
+            throw new ApplicationException($"Error calling external movie API - {response.StatusCode}: {response.ErrorMessage}");
         }
         
         return result;

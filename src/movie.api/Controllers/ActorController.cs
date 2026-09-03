@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using movie_svc.Services;
 using movie_svc.ViewModels.Actors;
-using Newtonsoft.Json;
-using RestSharp;
 
 namespace movie_svc.Controllers;
 
@@ -10,12 +8,10 @@ namespace movie_svc.Controllers;
 [Route("/api/cast")]
 public class ActorController : ControllerBase
 {
-    private readonly ILogger<ActorController> _logger;
     private readonly IRestClientService _restClientService;
 
-    public ActorController( ILogger<ActorController> logger, IRestClientService restClientService)
+    public ActorController(IRestClientService restClientService)
     {
-        _logger = logger;
         _restClientService = restClientService;
     }
 
@@ -24,7 +20,7 @@ public class ActorController : ControllerBase
     [Route("/api/actor/{actorId}")]
     public async Task<ActorDetails> GetById(int actorId)
     {
-        var request = new RestRequest($"/person/{actorId}?language=en-US&append_to_response=combined_credits");
+        var request = TmdbRequest.Get($"/person/{actorId}", ("language", "en-US"), ("append_to_response", "combined_credits"));
         ActorDetails actorDetails = await _restClientService.GetAsync<ActorDetails>(request);
         return actorDetails;
     }
@@ -34,7 +30,7 @@ public class ActorController : ControllerBase
     [Route("/api/search/actor/{searchText}")]
     public async Task<ActorSearchResults> ActorSearch(string searchText)
     {
-        var request = new RestRequest($"/search/person?query={searchText}&include_adult=false&language=en-US&page=1");
+        var request = TmdbRequest.Get("/search/person", ("query", searchText), ("include_adult", false), ("language", "en-US"), ("page", 1));
         ActorSearchResults results = await _restClientService.GetAsync<ActorSearchResults>(request);
         return results;
     }
@@ -44,7 +40,7 @@ public class ActorController : ControllerBase
     [Route("/api/actor/trending")]
     public async Task<ActorSearchResults> ActorTrending()
     {
-        var request = new RestRequest($"/trending/person/week?language=en-US");
+        var request = TmdbRequest.Get("/trending/person/week", ("language", "en-US"));
         ActorSearchResults results = await _restClientService.GetAsync<ActorSearchResults>(request);
         return results;
     }
@@ -54,7 +50,7 @@ public class ActorController : ControllerBase
     [Route("/api/actor/popular")]
     public async Task<ActorSearchResults> ActorPopular()
     {
-        var request = new RestRequest($"/person/popular?language=en-US&page=1");
+        var request = TmdbRequest.Get("/person/popular", ("language", "en-US"), ("page", 1));
         ActorSearchResults results = await _restClientService.GetAsync<ActorSearchResults>(request);
         return results;
     }

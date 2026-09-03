@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddTransient<IFavoritesService, FavoritesService>();
+builder.Services.AddSingleton<IFavoritesService, FavoritesService>();
 
 builder.Services.AddAuthentication(options =>
 {
