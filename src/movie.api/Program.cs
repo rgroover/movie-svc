@@ -132,15 +132,24 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-var allowedOrigins = builder.Configuration["AllowedOrigins"]?.Split(",") ?? new string[] {};
+var allowedOrigins = (builder.Configuration["AllowedOrigins"] ?? string.Empty)
+    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        builder.WithOrigins(allowedOrigins)
-               .AllowAnyHeader()
-               .AllowAnyMethod();
+        if (allowedOrigins.Contains("*", StringComparer.Ordinal))
+        {
+            policy.AllowAnyOrigin();
+        }
+        else
+        {
+            policy.WithOrigins(allowedOrigins);
+        }
+
+        policy.AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
