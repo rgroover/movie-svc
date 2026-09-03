@@ -35,14 +35,15 @@ public class DiscoveryController(IRestClientService restClientService) : Control
             ("language", "en-US"),
             ("page", Math.Clamp(page, 1, 500)),
             ("sort_by", sortBy),
-            ("watch_region", region.ToUpperInvariant())
+            ("watch_region", region.ToUpperInvariant()),
+            // Require a digital watch option while excluding theatrical-only releases.
+            ("with_watch_monetization_types", "flatrate|free|ads|rent|buy")
         };
 
         if (!string.IsNullOrWhiteSpace(genreIds)) parameters.Add(("with_genres", genreIds));
         if (!string.IsNullOrWhiteSpace(providerIds))
         {
             parameters.Add(("with_watch_providers", providerIds));
-            parameters.Add(("with_watch_monetization_types", "flatrate"));
         }
         if (minRating.HasValue) parameters.Add(("vote_average.gte", Math.Clamp(minRating.Value, 0, 10)));
         if (year.HasValue) parameters.Add((mediaType == "movie" ? "primary_release_year" : "first_air_date_year", year.Value));
@@ -59,6 +60,10 @@ public class DiscoveryController(IRestClientService restClientService) : Control
             return BadRequest("mediaType must be 'movie' or 'tv'.");
 
         var request = TmdbRequest.Get($"/watch/providers/{mediaType}", ("watch_region", region.ToUpperInvariant()), ("language", "en-US"));
-        return await restClientService.GetAsync<WatchProviderList>(request);
+        var providers = await restClientService.GetAsync<WatchProviderList>(request);
+        providers.Results = providers.Results
+            .OrderBy(provider => provider.ProviderName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+        return providers;
     }
 }
