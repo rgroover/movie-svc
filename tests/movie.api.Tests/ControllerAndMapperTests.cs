@@ -51,14 +51,37 @@ public class PublicCatalogControllerTests
         await controller.MovieSearch("The Matrix");
         await controller.MovieTrending();
         await controller.MoviePopular();
+        await controller.MovieUpcoming();
+        await controller.MovieUpcoming(2);
         await controller.GetRecommendations(42, 2);
         await controller.GetReviews(42, 3);
 
         Assert.Equal([
             "/movie/42?language=en-US", "/movie/42/credits?language=en-US", "/movie/42/watch/providers", "/movie/42/videos",
             "/search/movie?include_adult=false&language=en-US&page=1&query=The Matrix", "/trending/movie/week?language=en-US",
-            "/movie/popular?language=en-US&page=1&region=US", "/movie/42/recommendations?language=en-US&page=2", "/movie/42/reviews?language=en-US&page=3"
+            "/movie/popular?language=en-US&page=1&region=US",
+            "/movie/upcoming?language=en-US&page=1&region=US", "/movie/upcoming?language=en-US&page=2&region=US", "/movie/42/recommendations?language=en-US&page=2", "/movie/42/reviews?language=en-US&page=3"
         ], client.Resources);
+    }
+
+    [Fact]
+    public async Task Now_playing_preserves_the_requested_page_and_release_filters()
+    {
+        var client = new RecordingRestClient();
+        var controller = new MovieController(client);
+
+        await controller.MovieNowPlaying();
+        await controller.MovieNowPlaying(3);
+
+        Assert.Equal(2, client.Resources.Count);
+        Assert.Contains("&page=1&", client.Resources[0]);
+        Assert.Contains("&page=3&", client.Resources[1]);
+        Assert.All(client.Resources, resource =>
+        {
+            Assert.StartsWith("discover/movie?include_adult=false&include_video=false&language=en-US", resource);
+            Assert.Contains("&sort_by=popularity.desc&with_release_type=2|3&release_date.gte=", resource);
+            Assert.Contains("&release_date.lte=", resource);
+        });
     }
 
     [Fact]

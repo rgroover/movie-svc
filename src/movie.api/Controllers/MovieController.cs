@@ -70,13 +70,22 @@ public class MovieController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(SearchResultsPagedModel), 200)]
     [Route("/api/movie/now-playing")]
-    public async Task<SearchResultsPagedModel> MovieNowPlaying()
+    public async Task<SearchResultsPagedModel> MovieNowPlaying([FromQuery] int page = 1)
     {
         var minDate = DateTime.UtcNow.AddDays(-120).ToString("yyyy-MM-dd");
         var maxDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
-        var request = TmdbRequest.Get("discover/movie", ("include_adult", false), ("include_video", false), ("language", "en-US"), ("page", 1), ("sort_by", "popularity.desc"), ("with_release_type", "2|3"), ("release_date.gte", minDate), ("release_date.lte", maxDate));
+        var request = TmdbRequest.Get("discover/movie", ("include_adult", false), ("include_video", false), ("language", "en-US"), ("page", page), ("sort_by", "popularity.desc"), ("with_release_type", "2|3"), ("release_date.gte", minDate), ("release_date.lte", maxDate));
         SearchResultsPagedModel searchResultsPagedModel = await _restClientService.GetAsync<SearchResultsPagedModel>(request);
         return searchResultsPagedModel;
+    }
+
+    [HttpGet]
+    [ProducesResponseType(typeof(SearchResultsPagedModel), 200)]
+    [Route("/api/movie/upcoming")]
+    public async Task<SearchResultsPagedModel> MovieUpcoming([FromQuery] int page = 1)
+    {
+        var request = TmdbRequest.Get("/movie/upcoming", ("language", "en-US"), ("page", page), ("region", "US"));
+        return await _restClientService.GetAsync<SearchResultsPagedModel>(request);
     }
 
     [HttpGet]
